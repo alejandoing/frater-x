@@ -1,0 +1,17 @@
+filter(function)
+  -webkit-filter: function
+  filter function
+
+grid-template-repeat(columns, column-size, rows, row-size)
+  grid-template repeat(columns, column-size) /\ repeat(rows, row-size)
+
+image-size(height, width)
+  height height
+  width width
+
+layout-structure(columns, rows)
+  .container
+    grid-template-repeat(columns, 1fr, rows, 1fr)
+
+margin-shortcut(size, diff, axisY)
+  margin axisY ? (size)em (size * diff)em : (size * diff)em (size)em

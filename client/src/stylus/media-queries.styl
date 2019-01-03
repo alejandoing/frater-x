@@ -1,0 +1,16 @@
+// -------- Width sizes -------- //
+
+$tablet-landscape = 768px 1024px
+$tablet-l-landscape = 1366px
+
+// -------- Height sizes -------- //
+
+$large-screen-height = 850px
+
+tablet-adjust(minWidth, maxWidth)
+  @media (min-width: minWidth) and (max-width: maxWidth)
+    {block}
+
+tablet-adjust-orientation(minWidth, maxWidth, orientation)
+  @media (min-width: minWidth) and (max-width: maxWidth) and (orientation: orientation)
+    {block}

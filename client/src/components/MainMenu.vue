@@ -1,0 +1,51 @@
+<template lang="pug">
+  v-container
+    Item(
+      v-for="{ route, src } in menu['ADMINISTRATOR']"
+      :key="src"
+      :route="route"
+      :src="src"
+    )
+</template>
+
+<script>
+import Item from './Item.vue'
+
+export default {
+  data: () => ({
+    menu: {
+      ADMINISTRATOR: [
+        { route: '/polls/add/', src: 'new-poll.png' },
+        { route: '/polls/', src: 'my-polls.png' },
+        { route: '/business/', src: 'my-business.png' },
+        { route: '/users/', src: 'users.png' },
+        { route: '/settings/', src: 'settings.png' },
+        { route: '/poll-mode/', src: 'poll-mod.png' }
+      ],
+      ZONE: [
+        { route: '/polls/', src: 'my-polls.png' },
+        { route: '/zone/', src: 'my-business.png' },
+        { route: '/users/', src: 'users.png' },
+        { route: '/poll-mode/', src: 'poll-mod.png' }
+      ]
+    }
+  }),
+  components: { Item },
+  name: 'MainMenu'
+}
+</script>
+
+<style lang="stylus" scoped>
+.container
+  display grid
+  gap $gap-default
+  grid-template-repeat(2, 1fr, 3, 1fr)
+  height 100%
+  place-items center
+
++tablet-adjust-orientation(600px, 1024px, landscape)
+  layout-structure(2, 3)
+
++tablet-adjust-orientation(600px, 1024px, portrait)
+  layout-structure(3, 2)
+</style>

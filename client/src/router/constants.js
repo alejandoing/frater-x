@@ -1,0 +1,5 @@
+export const ALL = '*'
+export const HOME = '/home'
+export const DASHBOARD = '/dashboard'
+export const POLLS_ADD = '/polls/add'
+export const SIGN_IN = '/signIn'
