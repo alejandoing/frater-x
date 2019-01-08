@@ -10,12 +10,13 @@
 
 <script>
 import Item from './Item.vue'
+import { POLLS_ADD } from '../router/constants'
 
 export default {
   data: () => ({
     menu: {
       ADMINISTRATOR: [
-        { route: '/polls/add/', src: 'new-poll.png' },
+        { route: POLLS_ADD, src: 'new-poll.png' },
         { route: '/polls/', src: 'my-polls.png' },
         { route: '/business/', src: 'my-business.png' },
         { route: '/users/', src: 'users.png' },

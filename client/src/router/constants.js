@@ -1,5 +1,6 @@
 export const ALL = '*'
-export const HOME = '/home'
 export const DASHBOARD = '/dashboard'
+export const HOME = '/home'
+export const KIOSK_MODE = '/kiosk/:poll/:local'
 export const POLLS_ADD = '/polls/add'
 export const SIGN_IN = '/signIn'

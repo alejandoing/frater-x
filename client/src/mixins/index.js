@@ -1,5 +1,6 @@
 import { ERROR, AUTH_ERROR_MSG, AUTH_DESACTIVED_MSG, KEYUP,
-  SUBMIT, INVALID_EMAIL_MSG, REQUIRED_EMAIL_MSG, REQUIRED_PASSWORD_MSG
+  SUBMIT, INVALID_EMAIL_MSG, REQUIRED_EMAIL_MSG, REQUIRED_PASSWORD_MSG,
+  SUFFIX_UP, SUFFIX_ME, SUFFIX_IC, STRING, HIDDEN
 } from './constants'
 
 export const buildAlert = {
@@ -83,6 +84,53 @@ export const loader = {
       setTimeout(() => (this[l] = false), 4500)
 
       this.loader = null
+    }
+  }
+}
+
+export const dynamicMixin = {
+  methods: {
+    dynamicID (string, ref, suffix = false) {
+      return suffix ? `${string}-${ref}-${suffix}` : `${string}-${ref}`
+    }
+  }
+}
+
+export const uploadMixin = {
+  data: () => ({
+    suffixUp: SUFFIX_UP,
+    suffixMe: SUFFIX_ME,
+    suffixIc: SUFFIX_IC,
+    background: null,
+    selectedFiles: {}
+  }),
+  methods: {
+    uploadClick (ID) {
+      const $button = document.getElementById(ID)
+      $button.click()
+    },
+    writeFile (event, element, type = STRING) {
+      const $input = document.getElementById(element)
+      const $button = document.getElementById(`${element}-${this.suffixUp}`)
+      
+      const $media = document.getElementById(`${element}-${this.suffixMe}`)
+      const $icon = document.getElementById(`${element}-${this.suffixIc}`)
+      
+      if (type !== STRING) {
+        const input = event.target
+        const reader = new FileReader()
+        reader.onload = function () {
+          $media.classList.remove(HIDDEN)
+          $icon.classList.add(HIDDEN)
+          $media.src = reader.result
+        }
+        reader.readAsDataURL(input.files[0])
+      } else {
+        $button.innerHTML = $input.files[0].name
+      }
+
+      this[element] = event.srcElement.files[0]
+      this.selectedFiles[element] = true
     }
   }
 }

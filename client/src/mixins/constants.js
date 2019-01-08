@@ -12,3 +12,11 @@ export const REQUIRED_PASSWORD_MSG = 'La contraseña es obligatoria'
 
 export const KEYUP = 'keyup'
 export const SUBMIT = 'submit'
+
+export const SUFFIX_UP = 'up'
+export const SUFFIX_ME = 'media'
+export const SUFFIX_IC = 'icon'
+
+export const STRING = 'string'
+
+export const HIDDEN = 'hidden'

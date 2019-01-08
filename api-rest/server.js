@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/user/auth/', async (req, res) => {
+  console.info('Try login')
   try {
     const signIn = await auth.signInWithEmailAndPassword(req.body.email, req.body.password)
     if (signIn) {

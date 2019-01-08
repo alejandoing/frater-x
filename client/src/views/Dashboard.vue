@@ -12,15 +12,6 @@ export default {
     messages: {}
   }),
   async created () {
-    // const query = gql`query {
-    //   messages { _id, text }
-    // }`
-
-    // const response = await this.$apollo.query({ query })
-    // const { messages } = response.data
-
-    // this.messages = messages
-    // this.$store.dispatch('getMessages', messages)
   }
 }
 </script>

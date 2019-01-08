@@ -8,7 +8,7 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://192.168.0.253:8000/'
+axios.defaults.baseURL = 'http://192.168.5.106:8000/'
 
 Vue.config.productionTip = false
 

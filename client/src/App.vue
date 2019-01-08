@@ -8,6 +8,12 @@ export default {}
 </script>
 
 <style <style lang="stylus">
+.pointer
+  cursor: pointer
+
+.hidden
+  display: none
+
 .custom-loader
   animation loader 1s infinite
   display flex
