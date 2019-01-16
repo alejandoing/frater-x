@@ -134,15 +134,12 @@ export const uploadMixin = {
     },
     writeFile (event, type = STRING, context = null) {
       const { getElementById, hiddenToggle, level } = this
-
       const rootID = event.srcElement.id
-      const $input = getElementById(rootID)
-      const $button = getElementById(rootID, [SUFFIX_UP])
+      const reader = new FileReader()
       
       if (type !== STRING) {
         const $media = getElementById(rootID, [SUFFIX_ME])
         const $icon = getElementById(rootID, [SUFFIX_IC])
-        const reader = new FileReader()
 
         reader.onload = () => {
           const [face, index] = context
@@ -154,7 +151,12 @@ export const uploadMixin = {
 
         reader.readAsDataURL(event.target.files[0])
       } else {
-        $button.innerHTML = $input.files[0].name
+        reader.onload = () => {
+          this.background = event.srcElement.files[0]
+          this.background.src = reader.result
+        }
+
+        reader.readAsDataURL(event.target.files[0])
       }
     },
     hiddenToggle ($elementR, $elementA) {

@@ -31,9 +31,15 @@
           v-text-field#background.hidden(type="file" @change.native="writeFile($event)")
           v-btn#background-up(
             @click="uploadClick('background')"
-            v-html="text.buttons[0]"
+            v-html="background.name || text.buttons[0]"
             block
             color="primary"
+          )
+        v-flex(xs12 v-if="background.src").mb-5
+          img(
+            height="300"
+            width="100%"
+            :src="background.src"
           )
         Level(
           @update-flow="updateFlow"
@@ -67,6 +73,7 @@ export default {
   components: { Level },
   data: () => ({
     question: null,
+    background: {},
     flow: {},
     local: null,
     localsSelect: [1, 2, 3, 4, 5, 6, 7],
