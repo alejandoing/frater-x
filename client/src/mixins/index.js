@@ -1,6 +1,6 @@
 import { ERROR, AUTH_ERROR_MSG, AUTH_DESACTIVED_MSG, KEYUP,
   SUBMIT, INVALID_EMAIL_MSG, REQUIRED_EMAIL_MSG, REQUIRED_PASSWORD_MSG,
-  SUFFIX_UP, SUFFIX_ME, SUFFIX_IC, STRING, HIDDEN
+  SUFFIX_UP, SUFFIX_ME, SUFFIX_IC, STRING, IMAGE, HIDDEN, OPTION_IMAGE, OPTIONS_IND
 } from './constants'
 
 export const buildAlert = {
@@ -90,47 +90,77 @@ export const loader = {
 
 export const dynamicMixin = {
   methods: {
-    dynamicID (string, ref, suffix = false) {
-      return suffix ? `${string}-${ref}-${suffix}` : `${string}-${ref}`
+    dynamicFlow (level) {
+      return {
+        faces: {
+          excellent: { question: 'Nos alegra saberlo, ¿qué servicio utilizaste?', options: [] },
+          good: { question: 'Nos alegra saberlo, ¿qué servicio utilizaste?', options: [] },
+          regular: { question: 'Nos entristece saberlo, ¿qué servicio utilizaste?', options: [] },
+          bad: { question: 'Nos entristece saberlo, ¿qué servicio utilizaste?', options: [] }
+        },
+        title: `Flujo ${(level + 1)}`,
+        key: level
+      }
+    }
+  }
+}
+
+export const documentMixin = {
+  methods: {
+    dynamicID (root, suffixes = []) {
+      const collection = suffixes.map(suffix => `${suffix}-`).join('')
+      return `${root}-${collection.substring(0, collection.length - 1)}`
+    },
+    getElementById (ID, dynamic = false) {
+      return dynamic ? document.getElementById(this.dynamicID(ID, dynamic)) : document.getElementById(ID)
     }
   }
 }
 
 export const uploadMixin = {
   data: () => ({
-    suffixUp: SUFFIX_UP,
-    suffixMe: SUFFIX_ME,
-    suffixIc: SUFFIX_IC,
-    background: null,
-    selectedFiles: {}
+    SUFFIX_UP,
+    SUFFIX_ME,
+    SUFFIX_IC,
+    IMAGE,
+    STRING,
+    OPTION_IMAGE,
+    OPTIONS_IND
   }),
   methods: {
     uploadClick (ID) {
-      const $button = document.getElementById(ID)
-      $button.click()
+      const $element = this.getElementById(ID)
+      $element.click()
     },
-    writeFile (event, element, type = STRING) {
-      const $input = document.getElementById(element)
-      const $button = document.getElementById(`${element}-${this.suffixUp}`)
-      
-      const $media = document.getElementById(`${element}-${this.suffixMe}`)
-      const $icon = document.getElementById(`${element}-${this.suffixIc}`)
+    writeFile (event, type = STRING, context = null) {
+      const { getElementById, hiddenToggle, level } = this
+
+      const rootID = event.srcElement.id
+      const $input = getElementById(rootID)
+      const $button = getElementById(rootID, [SUFFIX_UP])
       
       if (type !== STRING) {
-        const input = event.target
+        const $media = getElementById(rootID, [SUFFIX_ME])
+        const $icon = getElementById(rootID, [SUFFIX_IC])
         const reader = new FileReader()
-        reader.onload = function () {
-          $media.classList.remove(HIDDEN)
-          $icon.classList.add(HIDDEN)
+
+        reader.onload = () => {
+          const [face, index] = context
+          hiddenToggle($media, $icon)
           $media.src = reader.result
+          this.level.faces[face].options[index - 1] = event.srcElement.files[0]
+          this.$emit('update-flow', level)
         }
-        reader.readAsDataURL(input.files[0])
+
+        reader.readAsDataURL(event.target.files[0])
       } else {
         $button.innerHTML = $input.files[0].name
       }
-
-      this[element] = event.srcElement.files[0]
-      this.selectedFiles[element] = true
+    },
+    hiddenToggle ($elementR, $elementA) {
+      $elementR.classList.remove(HIDDEN)
+      $elementA.classList.add(HIDDEN)
     }
-  }
+  },
+  mixins: [documentMixin]
 }

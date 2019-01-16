@@ -41,11 +41,10 @@
 </template>
 
 <script>
-import { buildAlert, submitKey, customValidations, loader } from '../mixins/'
+import { buildAlert, submitKey, customValidations, loader } from 'mixins'
 import { validationMixin } from 'vuelidate'
 import { required, email } from 'vuelidate/lib/validators'
-import { HOME } from '../router/constants'
-import axios from 'axios'
+import { HOME } from 'router/constants'
 
 export default {
   computed: {
@@ -69,7 +68,7 @@ export default {
       this.$v.$touch()
       if (!this.$v.$invalid) {
         this.loader = 'loading'
-        const user = await axios.post('user/auth/', {
+        const user = await this.$axios.post('user/auth/', {
           email: this.email,
           password: this.password
         })

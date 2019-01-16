@@ -36,8 +36,7 @@
 </template>
 
 <script>
-import { HOME, DASHBOARD, SIGN_IN } from '../router/constants'
-import axios from 'axios'
+import { HOME, DASHBOARD, SIGN_IN } from 'router/constants'
 export default {
   computed: {
     appTitle () {
@@ -59,7 +58,7 @@ export default {
   },
   methods: {
     async signOut () {
-      const response = await axios.post('user/exit/')
+      const response = await this.$axios.post('user/exit/')
 
       if (response) {
         this.$store.dispatch('removeUser')

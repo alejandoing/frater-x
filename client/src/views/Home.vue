@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import MainMenu from '../components/MainMenu'
+import MainMenu from 'components/MainMenu'
 
 export default {
   components: {

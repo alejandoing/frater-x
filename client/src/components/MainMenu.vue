@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import Item from './Item.vue'
-import { POLLS_ADD } from '../router/constants'
+import Item from 'components/Item.vue'
+import { POLLS_ADD } from 'router/constants'
 
 export default {
   data: () => ({

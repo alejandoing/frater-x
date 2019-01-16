@@ -18,5 +18,9 @@ export const SUFFIX_ME = 'media'
 export const SUFFIX_IC = 'icon'
 
 export const STRING = 'string'
+export const IMAGE = 'image'
 
 export const HIDDEN = 'hidden'
+
+export const OPTION_IMAGE = 'option-image'
+export const OPTIONS_IND = Array.from(Array(4), (_, i) => i + 1)

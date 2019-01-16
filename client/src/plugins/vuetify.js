@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
-import { VAlert, VTabs } from 'vuetify'
+import { VAlert, VTabs, VTooltip } from 'vuetify'
 import colors from 'vuetify/es5/util/colors'
 import 'vuetify/src/stylus/app.styl'
 
 Vue.use(Vuetify, {
   components: {
     VAlert,
-    VTabs
+    VTabs,
+    VTooltip
   },
   iconfont: 'md',
   theme: {
