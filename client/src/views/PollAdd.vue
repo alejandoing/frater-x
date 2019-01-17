@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form.pt-5
-    v-container(grid-list-md)
+    v-container(grid-list-xs)
       v-layout(row wrap)
         v-flex.pb-5(xs12)
           span.display-1(v-html="text.main")
@@ -37,30 +37,25 @@
           )
         v-flex(xs12 v-if="background.src").mb-5
           img(
-            height="300"
+            height="500"
             width="100%"
             :src="background.src"
           )
-        Level(
-          @update-flow="updateFlow"
-          v-for="(level, key) in flow"
-          v-if="level"
-          :key="key"
-          :level="flow[key]"
-        )
-    .text-xs-right.py-5.px-5
+        v-flex(xs12).mb-2
+            Level(
+              @update-flow="updateFlow"
+              v-for="(level, key) in flow"
+              v-if="level"
+              :key="key"
+              :levelKey="key"
+            )
+    .text-xs-right.py-3.px-5
       v-tooltip(top)
-        v-btn(@click="addFlow" color="primary" dark fab large slot="activator")
+        v-btn(@click="addFlow" color="primary" dark fab slot="activator")
           v-icon(dark) add
         span Agregar flujo
-      v-tooltip(top)
-        v-btn(
-          @click="removeFlow"
-          v-if="flow[1]"
-          color="primary"
-          dark fab large
-          slot="activator"
-        )
+      v-tooltip(top v-if="flow[1]")
+        v-btn(@click="removeFlow" color="primary" dark fab slot="activator")
           v-icon(dark) remove
         span Eliminar flujo
 </template>

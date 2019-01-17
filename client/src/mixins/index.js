@@ -98,7 +98,7 @@ export const dynamicMixin = {
           regular: { question: 'Nos entristece saberlo, ¿qué servicio utilizaste?', options: [] },
           bad: { question: 'Nos entristece saberlo, ¿qué servicio utilizaste?', options: [] }
         },
-        title: `Flujo ${(level + 1)}`,
+        title: `Flujo ${parseInt(level) + 1}`,
         key: level
       }
     }
@@ -130,22 +130,18 @@ export const uploadMixin = {
   methods: {
     uploadClick (ID) {
       const $element = this.getElementById(ID)
+      $element.value = null
       $element.click()
     },
     writeFile (event, type = STRING, context = null) {
-      const { getElementById, hiddenToggle, level } = this
-      const rootID = event.srcElement.id
+      const { selectedFiles, level } = this
       const reader = new FileReader()
       
       if (type !== STRING) {
-        const $media = getElementById(rootID, [SUFFIX_ME])
-        const $icon = getElementById(rootID, [SUFFIX_IC])
-
         reader.onload = () => {
           const [face, index] = context
-          hiddenToggle($media, $icon)
-          $media.src = reader.result
-          this.level.faces[face].options[index - 1] = event.srcElement.files[0]
+          this.level.faces[face].options[index] = event.srcElement.files[0]
+          this.$set(selectedFiles[face], index, reader.result)
           this.$emit('update-flow', level)
         }
 

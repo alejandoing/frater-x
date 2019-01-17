@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row wrap)
+  v-layout(row wrap transition="scale-transition")
     v-flex.pb-5(xs12)
       span.display-1.my-5(v-html="level.title")
       v-divider
@@ -38,26 +38,25 @@
               template(v-if="type === IMAGE")
                 v-container(grid-list-md)
                   v-layout(wrap)
-                    v-flex(v-for="i in 4" :key="i" md3 xs12)
+                    v-flex(v-for="(value, index) in 4" :key="index" md3 xs12)
                       v-text-field.hidden(
-                        @change.native=`writeFile($event, IMAGE, [key, i])`
-                        :id="dynamicID(OPTION_IMAGE, [level.key, key, i])"
+                        @change.native="writeFile($event, IMAGE, [key, index])"
+                        :id="dynamicID(OPTION_IMAGE, [levelKey, key, index])"
                         type="file"
                       )
                       v-card.d-flex.align-center.pointer(
-                        @click="uploadClick(dynamicID(OPTION_IMAGE, [level.key, key, i]))"
+                        @click="uploadClick(dynamicID(OPTION_IMAGE, [levelKey, key, index]))"
                         dark
                         height="200"
                       )
-                        img.hidden(
-                          :id="dynamicID(OPTION_IMAGE, [level.key, key, i, SUFFIX_ME])"
+                        img(
+                          v-if="selectedFiles[key][index]"
+                          :src="selectedFiles[key][index]"
                           height="200"
                           width="200"
                         )
-                        v-scroll-y-transition
-                          .display-3.text-xs-center(
-                            :id=`dynamicID(OPTION_IMAGE, [level.key, key, i, SUFFIX_IC])`
-                          )
+                        v-scroll-y-transition(v-else)
+                          .display-3.text-xs-center
                             v-icon(dark large) cloud_upload
               .text-xs-center.py-1(v-show="type")
                 v-btn(@click="replicateOptions(key)" color="green" dark) Replicar Opciones
@@ -67,7 +66,7 @@
 </template>
 
 <script>
-import { uploadMixin } from 'mixins'
+import { dynamicMixin, uploadMixin } from 'mixins'
 
 export default {
   computed: {
@@ -82,7 +81,9 @@ export default {
         image: { icon: 'image', tooltip: 'Modelo gráfico' }
       }
     },
-    type: null
+    level: {},
+    selectedFiles: { excellent: {}, good: {}, regular: {}, bad: {} },
+    type: "string"
   }),
   methods: {
     enableOption (type, key) {
@@ -90,11 +91,7 @@ export default {
       this.clearOptions(key)
     },
     replicateOptions (selected) {
-      const {
-        getElementById, hiddenToggle, type, level,
-        IMAGE, OPTION_IMAGE, OPTIONS_IND, SUFFIX_ME, SUFFIX_IC
-      } = this
-      
+      const { type, level, IMAGE, OPTIONS_IND } = this
       const { options } = level.faces[selected]
 
       if (options.length) {
@@ -102,16 +99,7 @@ export default {
           this.level.faces[face].options = options
           if (type === IMAGE) {
             for (let index of OPTIONS_IND) {
-              const base = [level.key, face, index]
-              const $media = getElementById(OPTION_IMAGE, [level.key, selected, index, SUFFIX_ME])
-              
-              if ($media.src && $media.src !== window.location.href) {
-                const $mediaRep = getElementById(OPTION_IMAGE, base.concat([SUFFIX_ME]))
-                const $icon = getElementById(OPTION_IMAGE, base.concat([SUFFIX_IC]))
-
-                $mediaRep.src = $media.src
-                hiddenToggle($mediaRep, $icon)
-              }
+              this.$set(this.selectedFiles[face], index, this.selectedFiles[selected][index])
             }
           }
         }
@@ -119,34 +107,25 @@ export default {
       this.$emit('update-flow', this.level)
     },
     clearOptions (selected) {
-      const {
-        getElementById, hiddenToggle, type, level,
-        IMAGE, OPTION_IMAGE, OPTIONS_IND, SUFFIX_ME, SUFFIX_IC
-      } = this
+      const { getElementById, type, level, levelKey, IMAGE, OPTION_IMAGE, OPTIONS_IND } = this
 
       this.level.faces[selected].options = []
       
-      for (let face in level.faces) {
-        if (type === IMAGE) {
+      if (type === IMAGE) {
+        for (let face in level.faces) {
           for (let index of OPTIONS_IND) {
-            const base = [level.key, face, index]
-            const $media = getElementById(OPTION_IMAGE, base.concat([SUFFIX_ME]))
-            const $icon = getElementById(OPTION_IMAGE, base.concat([SUFFIX_IC]))
-            const $input = getElementById(OPTION_IMAGE, base)
-            
-            if ($media) {
-              $media.src = ''
-              $input.value = null
-              hiddenToggle($icon, $media)
-            }
+            this.$delete(this.selectedFiles[face], index, null)
           }
         }
       }
       this.$emit('update-flow', this.level)
     }
   },
-  mixins: [uploadMixin],
+  created () {
+    this.level = this.dynamicFlow(this.levelKey)
+  },
+  mixins: [dynamicMixin, uploadMixin],
   name: 'Level',
-  props: { level: Object }
+  props: { levelKey: String }
 }
 </script>
