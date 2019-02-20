@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(row wrap transition="scale-transition")
-    v-flex.pb-5(xs12)
+    v-flex.py-3(xs12)
       span.display-1.my-5(v-html="level.title")
       v-divider
     v-flex(xs12)
@@ -12,16 +12,21 @@
         v-tab-item(v-for="(f, key) in faces" :key="key" :value="key")
           v-card(flat)
             v-card-text.text-xs-center.py-4
-              v-tooltip(bottom v-for="(btn, i) in buttons['flat']" :key="i")
-                v-btn(
-                  @click="enableOption(i, key)"
-                  :id="dynamicID('flow-option-type', [key])"
-                  color="primary"
-                  dark fab large
-                  slot="activator"
-                )
-                  v-icon(dark v-html="btn.icon")
-                span(v-html="btn.tooltip")
+              v-btn(
+                @click="enableOption(i, key)"
+                v-for="(btn, i) in buttons['flat']"
+                :id="dynamicID('flow-option-type', [key])"
+                :key="i"
+                color="primary"
+                dark fab large
+                slot="activator"
+              )
+                v-icon(dark v-html="btn.icon")
+              v-alert.text-xs-left.mb-4(
+                :value="true"
+                type="info"
+                color="secondary"
+              ) Recuerda que las imágenes deben ser transparentes
               template(v-if="type === STRING")
                 v-flex(xs12)
                   v-text-field.pb-3(
@@ -34,6 +39,7 @@
                       :label="'Opción ' + (i + 1)"
                       :required="i <= 1"
                       v-model.trim="level.faces[key].options[i]"
+                      :error-messages="flowErrors"
                     )
               template(v-if="type === IMAGE")
                 v-container(grid-list-md)
@@ -66,9 +72,16 @@
 </template>
 
 <script>
-import { dynamicMixin, uploadMixin } from 'mixins'
+import { customValidationMixin, dynamicMixin, uploadMixin } from 'mixins'
+import { validationMixin } from 'vuelidate'
+import Modal from 'components/Modal.vue'
+
+const isNull = (value, component) => {
+  return value !== ''
+}
 
 export default {
+  components: { Modal },
   computed: {
     faces () {
       return this.$store.getters.faces
@@ -83,7 +96,7 @@ export default {
     },
     level: {},
     selectedFiles: { excellent: {}, good: {}, regular: {}, bad: {} },
-    type: "string"
+    type: null
   }),
   methods: {
     enableOption (type, key) {
@@ -103,11 +116,14 @@ export default {
             }
           }
         }
+        this.$swal('¡Excelente!', 'Opciones replicadas correctamente', 'success')
+      } else {
+        this.$swal('¡Atención!', 'Debe completar al menos una opción antes de replicar', 'warning')
       }
       this.$emit('update-flow', this.level)
     },
     clearOptions (selected) {
-      const { getElementById, type, level, levelKey, IMAGE, OPTION_IMAGE, OPTIONS_IND } = this
+      const { type, level, IMAGE, OPTIONS_IND } = this
 
       this.level.faces[selected].options = []
       
@@ -123,9 +139,31 @@ export default {
   },
   created () {
     this.level = this.dynamicFlow(this.levelKey)
+    this.type = this.STRING
   },
-  mixins: [dynamicMixin, uploadMixin],
+  mixins: [customValidationMixin, dynamicMixin, uploadMixin, validationMixin],
   name: 'Level',
-  props: { levelKey: String }
+  props: { levelKey: String },
+  validations: {
+    level: {
+      faces: {
+        $each: {
+          options: {
+            // minLength: minLength(2),
+            isNull
+          }
+        }
+      }
+    }
+  },
+  watch: {
+    level: {
+      handler (val) {
+        console.log(this.$v.level.faces.$each)
+        // console.log(this.level.faces.excellent.options)
+      },
+      deep: true
+    }
+  }
 }
 </script>

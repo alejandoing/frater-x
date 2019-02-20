@@ -1,27 +1,42 @@
-import { ERROR, AUTH_ERROR_MSG, AUTH_DESACTIVED_MSG, KEYUP,
-  SUBMIT, INVALID_EMAIL_MSG, REQUIRED_EMAIL_MSG, REQUIRED_PASSWORD_MSG,
-  SUFFIX_UP, SUFFIX_ME, SUFFIX_IC, STRING, IMAGE, HIDDEN, OPTION_IMAGE, OPTIONS_IND
+import { INVALID_EMAIL_MSG, REQUIRED_MSG, STRING, IMAGE, HIDDEN, OPTION_IMAGE, OPTIONS_IND
 } from './constants'
 
-export const buildAlert = {
-  data: () => ({
-    alert: {
-      _self: false,
-      type: null,
-      message: null
-    }
-  }),
-
+export const swalMixin = {
   methods: {
-    feedBack (context, object) {
+    async confirmationSwal (title, text) {
+      await this.$swal({
+        title,
+        text,
+        icon: 'warning',
+        dangerMode: true,
+        buttons: {
+          cancel: {
+            text: 'Cancelar',
+            value: false,
+            closeModal: true,
+            visible: true
+          },
+          confirm: {
+            text: 'Estoy Seguro',
+            value: true,
+            closeModal: true
+          }
+        }
+      })
+    },
+    feedBackSwal (context, object) {
+      this.loader = null
+      this.loading = false
+      
       const contexts = {
         AUTH: () => {
           const status = {
-            ACTIVE: () => true,
+            ACTIVE: () => {
+              this.$swal('¡Bienvenido a NPSFrater-X!', 'Credenciales correctas', 'success')
+              return true
+            },
             DESACTIVED: () => {
-              this.alert._self = true
-              this.alert.message = AUTH_DESACTIVED_MSG
-              this.alert.type = ERROR
+              this.$swal('¡Advertencia!', 'El usuario ha sido desactivado. Contacte a Administración', 'warning')
               return false
             }
           }
@@ -29,9 +44,7 @@ export const buildAlert = {
           try {
             return status[object.status]()
           } catch (e) {
-            this.alert._self = true
-            this.alert.message = AUTH_ERROR_MSG
-            this.alert.type = ERROR
+            this.$swal('¡Algo ha salido mal!', 'Credenciales incorrectas', 'error')
             return false
           }
         }
@@ -42,36 +55,43 @@ export const buildAlert = {
   }
 }
 
-export const submitKey = {
-  created () {
-    addEventListener(KEYUP, (event) => {
-      const $submit = document.getElementById(SUBMIT)
-      event.preventDefault()
-      if (event.keyCode === 13) $submit.click()
-    })
-  }
-}
-
-export const customValidations = {
+export const customValidationMixin = {
   computed: {
     emailErrors () {
       const errors = []
-      if (!this.$v.email.$dirty) return errors
+      const required = this.genericRequired('email')
+      
+      if (required.length) errors.push(required)
       !this.$v.email.email && errors.push(INVALID_EMAIL_MSG)
-      !this.$v.email.required && errors.push(REQUIRED_EMAIL_MSG)
-
       return errors
     },
+    flowErrors () {
+      return this.genericRequired('level')
+    },
     passwordErrors () {
+      return this.genericRequired('password')
+    },
+    questionErrors () {
+      return this.genericRequired('question')
+    },
+    localErrors () {
+      return this.genericRequired('local')
+    },
+    zoneErrors () {
+      return this.genericRequired('zone')
+    }
+  },
+  methods: {
+    genericRequired (element) {
       const errors = []
-      if (!this.$v.password.$dirty) return errors
-      !this.$v.password.required && errors.push(REQUIRED_PASSWORD_MSG)
+      if (!this.$v[element].$dirty) return errors
+      !this.$v[element].required && errors.push(REQUIRED_MSG)
       return errors
     }
   }
 }
 
-export const loader = {
+export const loaderMixin = {
   data: () => ({
     loader: null,
     loading: false
@@ -80,10 +100,6 @@ export const loader = {
     loader () {
       const l = this.loader
       this[l] = !this[l]
-
-      setTimeout(() => (this[l] = false), 4500)
-
-      this.loader = null
     }
   }
 }
@@ -119,9 +135,6 @@ export const documentMixin = {
 
 export const uploadMixin = {
   data: () => ({
-    SUFFIX_UP,
-    SUFFIX_ME,
-    SUFFIX_IC,
     IMAGE,
     STRING,
     OPTION_IMAGE,

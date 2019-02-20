@@ -7,7 +7,10 @@
 export default {}
 </script>
 
-<style <style lang="stylus">
+<style lang="stylus">
+body
+  font-family: Helvetica Neue, Arial, sans-serif
+  
 .pointer
   cursor: pointer
 

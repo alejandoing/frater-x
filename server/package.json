@@ -5,16 +5,22 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
+    "start": "nodemon app.js",
     "lint": "eslint src/js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",
+    "connect-multiparty": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "firebase": "^5.7.2"
+    "firebase": "^5.7.2",
+    "jwt-simple": "^0.5.5",
+    "moment": "^2.24.0",
+    "mongoose": "^5.4.14",
+    "mongoose-pagination": "^1.0.0"
   },
   "devDependencies": {
     "eslint": "^5.11.1",

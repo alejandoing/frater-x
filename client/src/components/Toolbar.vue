@@ -5,37 +5,14 @@
       span.font-weight-light(v-html="appTitle.last")
     v-spacer
     v-toolbar-items
-      v-btn(v-for="{ title, icon, route } in menu" :key="title" flat raised :to="route") {{ title }}
+      v-btn(v-for="{ title, icon, route } in menu" :key="title" :to="route" flat raised) {{ title }}
         v-icon.pl-2(v-html="icon")
-      v-btn(
-        flat
-        raised
-        @click.native="dialog = true"
-      ) {{ user.name }}
+      v-btn(@click.native="signOut" flat raised) {{ user.name }}
         v-icon.pl-2 exit_to_app
-
-    v-dialog(
-      v-model="dialog"
-      max-width="500"
-      persistent
-    )
-      v-card
-        v-card-title.title ¿Estar seguro de finalizar la sesión?
-        v-card-actions
-          v-spacer
-          v-btn(
-            color="primary"
-            flat="flat"
-            @click="signOut"
-          ) Aceptar
-          v-btn(
-            color="primary"
-            flat="flat"
-            @click="dialog = false"
-          ) Cancelar
 </template>
 
 <script>
+import { swalMixin } from 'mixins'
 import { HOME, DASHBOARD, SIGN_IN } from 'router/constants'
 export default {
   computed: {
@@ -46,27 +23,28 @@ export default {
       return this.$store.getters.user
     }
   },
-  data () {
-    return {
-      dialog: false,
-      menu: [
-        { icon: 'apps', route: HOME, title: 'Inicio' },
-        { icon: 'assessment', route: DASHBOARD, title: 'Resultados' },
-        { icon: 'assignment', route: SIGN_IN, title: 'Comentarios' }
-      ]
-    }
-  },
+  data: () => ({
+    menu: [
+      { icon: 'apps', route: HOME, title: 'Inicio' },
+      { icon: 'assessment', route: DASHBOARD, title: 'Resultados' },
+      { icon: 'assignment', route: SIGN_IN, title: 'Comentarios' }
+    ]
+  }),
   methods: {
     async signOut () {
-      const response = await this.$axios.post('user/exit/')
-
-      if (response) {
+      const confirmation = await this.confirmationSwal(
+        '¿Estás seguro de finalizar la sesión?',
+        'Todos tus datos serán guardados antes de finalizar'
+      )
+      
+      if (confirmation) {
+        this.$swal('Sesión finalizada correctamente', 'Gracias por utilizar NPSFrater-X', 'success')
         this.$store.dispatch('removeUser')
         this.$router.push(SIGN_IN)
       }
     }
   },
-
-  name: 'Toolbar'
+  name: 'Toolbar',
+  mixins: [swalMixin]
 }
 </script>

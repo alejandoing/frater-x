@@ -1,6 +1,6 @@
 <template lang="pug">
   router-link.test(:to="route")
-    img.elevation-12(:src="require(`@/assets/dashboard/${src}`)")
+    img.elevation-12(:src="require(`@/assets/dashboard/${src}`)" width="100%")
 </template>
 
 <script>
@@ -12,9 +12,14 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+a
+  max-width: 100%
+  max-height: 100%
 img
   cursor pointer
-  image-size(20em, 24em)
+  max-width: 100%
+  max-height: 100%
+  //image-size(20em, 24em)
   &:hover
     filter(grayscale(1))
 
